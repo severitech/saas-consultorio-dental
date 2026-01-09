@@ -19,6 +19,7 @@ import {
 
 import { data } from "@/components/Panel/Lista"
 import { NavSecondary } from "./Navegacion-Secundaria"
+import { NavegacionPrincipal } from "./Navegacion-Principal"
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -29,7 +30,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <a href="/">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Acme Inc.</span>
               </a>
@@ -38,6 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <NavegacionPrincipal items={data.NavegacionPrincipal} />
         <NavSecondary items={data.NavegacionSecundaria} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

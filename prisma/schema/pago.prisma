@@ -1,0 +1,17 @@
+model Pago {
+  id            String       @id @default(cuid())
+  suscripcionId String
+  suscripcion   Suscripcion  @relation(fields: [suscripcionId], references: [id])
+  monto         Float
+  fecha         DateTime
+  metodoPagoId  String
+  metodoPago    MetodoPago @relation(fields: [metodoPagoId], references: [id])
+  createdAt     DateTime     @default(now()) @map("creado_en")
+  updatedAt     DateTime     @updatedAt @map("actualizado_en")
+}
+
+model MetodoPago {
+  id        String   @id @default(cuid())
+  nombre    String   @unique
+  pagos     Pago[]
+}

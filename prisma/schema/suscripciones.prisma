@@ -1,0 +1,42 @@
+model Suscripcion {
+  id            String       @id @default(cuid())
+  empresaId     String
+  empresa       Empresa      @relation(fields: [empresaId], references: [id])
+  planId        String
+  plan          Plan         @relation(fields: [planId], references: [id])
+  cuponId       String?
+  cupon         Cupon?       @relation(fields: [cuponId], references: [id])
+  fechaInicio   DateTime
+  fechaFin      DateTime
+  estado        EstadoSuscripcion @default(ACTIVA)
+  pagos         Pago[]
+  createdAt     DateTime     @default(now()) @map("creado_en")
+  updatedAt     DateTime     @updatedAt @map("actualizado_en")
+}
+
+model Plan {
+  id            String       @id @default(cuid())
+  nombre        String
+  precioMensual Float
+  descripcion   String?
+  suscripciones Suscripcion[]
+  createdAt     DateTime     @default(now()) @map("creado_en")
+  updatedAt     DateTime     @updatedAt @map("actualizado_en")
+}
+
+model Cupon {
+  id            String       @id @default(cuid())
+  codigo        String       @unique
+  descuento     Float        // Porcentaje de descuento (0-100)
+  fechaExpiracion DateTime
+  suscripciones Suscripcion[]
+  createdAt     DateTime     @default(now()) @map("creado_en")
+  updatedAt     DateTime     @updatedAt @map("actualizado_en")
+}
+
+enum EstadoSuscripcion {
+  ACTIVA
+  CANCELADA
+  EXPIRADA
+}
+
