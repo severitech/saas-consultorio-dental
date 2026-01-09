@@ -29,9 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative w-full`}
       >
-        <BarraNagevacion />
         {children}
-        <Footer />
       </body>
     </html>
   );
