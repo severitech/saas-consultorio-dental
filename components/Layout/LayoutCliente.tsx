@@ -1,6 +1,5 @@
-
-import Footer from "@/components/Footer";
-import BarraNagevacion from "../navbar";
+import Footer from '@/components/Footer';
+import BarraNagevacion from '../navbar';
 
 export default function LayoutCliente({
   children,

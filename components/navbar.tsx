@@ -35,7 +35,7 @@ export default function BarraNagevacion() {
                     <NavbarLogo />
                     <NavItems items={navItems} />
                     <div className="flex items-center gap-4">
-                        <NavbarButton variant="secondary">Login</NavbarButton>
+                        <NavbarButton href="/auth/iniciar-sesion" variant="secondary">Login</NavbarButton>
                         <NavbarButton variant="primary">Book a call</NavbarButton>
                     </div>
                 </NavBody>
