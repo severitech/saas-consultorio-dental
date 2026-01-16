@@ -1,43 +1,95 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
 export const opcionesAuth: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID || "",
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET || "",
+      clientId: process.env.FACEBOOK_CLIENT_ID!,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
     }),
   ],
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        // Obtener información adicional del usuario desde la base de datos
-        const usuarioDB = await prisma.usuario.findUnique({
+    async jwt({ token, user, account }) {
+      // Cuando el usuario inicia sesión por primera vez
+      if (account && user) {
+        token.id = user.id;
+        token.email = user.email;
+        
+        // Buscar o crear el usuario en la base de datos usando nombres en español
+        const usuarioDB = await prisma.usuario.upsert({
           where: { correo: user.email || "" },
+          update: {
+            nombre: user.name || "",
+            imagen: user.image,
+            emailVerified: new Date(),
+          },
+          create: {
+            correo: user.email || "",
+            nombre: user.name || "",
+            imagen: user.image,
+            emailVerified: new Date(),
+            rolId: "", // Vacío por defecto, se asignará después
+          },
           include: {
             rolSistema: true,
             empresa: true,
           },
         });
 
-        if (usuarioDB) {
-          (session.user as any).id = usuarioDB.id;
-          (session.user as any).rolId = usuarioDB.rolSistemaId;
-          (session.user as any).rol = usuarioDB.rolSistema?.nombre;
-          (session.user as any).empresaId = usuarioDB.empresaId;
-          (session.user as any).empresa = usuarioDB.empresa?.nombre;
-        }
+        // Guardar la cuenta OAuth usando los campos en español
+        await prisma.cuenta.upsert({
+          where: {
+            proveedor_idCuentaProveedor: {
+              proveedor: account.provider,
+              idCuentaProveedor: account.providerAccountId,
+            },
+          },
+          update: {
+            tokenAcceso: account.access_token,
+            expiraEn: account.expires_at,
+            tokenRefresco: account.refresh_token,
+            idToken: account.id_token,
+            tipoToken: account.token_type,
+            alcance: account.scope,
+          },
+          create: {
+            usuarioId: usuarioDB.id,
+            tipo: account.type,
+            proveedor: account.provider,
+            idCuentaProveedor: account.providerAccountId,
+            tokenAcceso: account.access_token,
+            expiraEn: account.expires_at,
+            tokenRefresco: account.refresh_token,
+            idToken: account.id_token,
+            tipoToken: account.token_type,
+            alcance: account.scope,
+          },
+        });
+
+        token.usuarioId = usuarioDB.id;
+        token.rolId = usuarioDB.rolSistemaId ?? undefined;
+        token.rol = usuarioDB.rolSistema?.nombre;
+        token.empresaId = usuarioDB.empresaId ?? undefined;
+        token.empresa = usuarioDB.empresa?.nombre;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).id = token.usuarioId;
+        (session.user as any).rolId = token.rolId;
+        (session.user as any).rol = token.rol;
+        (session.user as any).empresaId = token.empresaId;
+        (session.user as any).empresa = token.empresa;
       }
       return session;
     },

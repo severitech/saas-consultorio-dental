@@ -104,7 +104,7 @@ model Usuario {
   correo        String?   @unique
   nombre        String?
   emailVerified DateTime?
-  image         String?
+  imagen         String?
   contraseña    String?
 
   rolId String
