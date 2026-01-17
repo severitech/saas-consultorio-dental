@@ -15,6 +15,7 @@ export default function layout({
         } as React.CSSProperties
       }
     >
+      
       <AppSidebar variant="inset" />
       <SidebarInset className="overflow-auto">
         {children}

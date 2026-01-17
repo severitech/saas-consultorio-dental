@@ -1,57 +1,31 @@
 "use client";
 
-import { useSesion } from "@/hooks/use-sesion";
+import { useProtegerRuta } from "@/hooks/use-proteger-ruta";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
+import { HeaderPanel } from "@/components/Panel/Header-Panel";
 
 function Page() {
-  const { usuario, cargando, autenticado } = useSesion();
+  const { usuario, cargando } = useProtegerRuta();
 
   if (cargando) {
     return (
       <div className="flex flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-        </header>
-        <div className="p-4 md:p-8">Cargando sesión...</div>
+        <HeaderPanel titulo="Panel de Administración" />
+        <div className="flex items-center justify-center flex-1">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
       </div>
     );
   }
 
-  if (!autenticado) {
-    return (
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-        </header>
-        <div className="p-4 md:p-8">No autenticado</div>
-      </div>
-    );
+  if (!usuario) {
+    return null;
   }
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>Panel de Administración</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </header>
+      <HeaderPanel titulo="Panel de Administración" />
       <div className="p-4 md:p-8 space-y-4">
       <h1 className="text-3xl font-bold">Panel de Administración</h1>
       

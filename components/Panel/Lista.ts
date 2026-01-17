@@ -6,12 +6,12 @@ export const data = {
   NavegacionSuperAdmin: [
     {
       title: "Usuarios",
-      url: "/panel/super-admin/usuarios",
+      url: "/panel/usuarios",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "Planes y Suscripciones",
+      url: "/panel/planes-y-suscripciones",
       icon: IconListDetails,
     },
     {
@@ -34,7 +34,7 @@ export const data = {
     
     {
       title: "Doctores y Pacientes",
-      url: "/panel/admin/usuarios",
+      url: "/panel/usuarios",
       icon: IconSettings,
     },
     {

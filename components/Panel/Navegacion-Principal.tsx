@@ -28,8 +28,8 @@ export function NavegacionPrincipal({
         <SidebarGroupLabel>{titulo}</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item) => (
-            <Link key={item.title} href={item.url}>
-              <SidebarMenuItem key={item.title}>
+            <Link  key={item.title} href={item.url}>
+              <SidebarMenuItem className=" cursor-pointer" key={item.title}>
                 <SidebarMenuButton tooltip={item.title}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
