@@ -36,7 +36,7 @@ export default function BarraNagevacion() {
                     <NavItems items={navItems} />
                     <div className="flex items-center gap-4">
                         <NavbarButton href="/auth/iniciar-sesion" variant="secondary">Login</NavbarButton>
-                        <NavbarButton variant="primary">Book a call</NavbarButton>
+                        <NavbarButton href="/panel" variant="primary">Book a call</NavbarButton>
                     </div>
                 </NavBody>
 
@@ -66,13 +66,15 @@ export default function BarraNagevacion() {
                         ))}
                         <div className="flex w-full flex-col gap-4">
                             <NavbarButton
+                                href="/auth/iniciar-sesion"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                variant="primary"
+                                variant="secondary"
                                 className="w-full"
                             >
                                 Login
                             </NavbarButton>
                             <NavbarButton
+                                href="/panel"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 variant="primary"
                                 className="w-full"

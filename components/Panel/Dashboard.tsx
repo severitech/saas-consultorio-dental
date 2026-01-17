@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
 
   IconInnerShadowTop,
@@ -28,10 +27,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
               <a href="/">
-                <IconInnerShadowTop className="!size-5" />
+                <IconInnerShadowTop className="size-5!" />
                 <span className="text-base font-semibold">Acme Inc.</span>
               </a>
             </SidebarMenuButton>
@@ -39,11 +38,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavegacionPrincipal items={data.NavegacionPrincipal} />
-        <NavSecondary items={data.NavegacionSecundaria} className="mt-auto" />
+        <NavegacionPrincipal titulo="Super Administrador" items={data.NavegacionSuperAdmin} />
+        <NavegacionPrincipal titulo="Administrador" items={data.NavegacionAdmin} />
+        <NavegacionPrincipal titulo="Doctor" items={data.NavegacionDoctor} />
+        <NavegacionPrincipal titulo="Recepcionista" items={data.NavegacionRecepcion} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.usuario} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

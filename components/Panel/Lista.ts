@@ -1,38 +1,12 @@
 import {  IconChartBar, IconDashboard, IconDatabase, IconFileDescription, IconFolder, IconHelp, IconListDetails, IconReport, IconSearch, IconSettings, IconUsers } from "@tabler/icons-react";
 
-interface TypeNavegacion {
-  usuario: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-  NavegacionPrincipal: Array<{
-    title: string;
-    url: string;
-    icon: React.ComponentType<any>;
-  }>;
-  NavegacionSecundaria: Array<{
-    title: string;
-    url: string;
-    icon: React.ComponentType<any>;
-  }>;
-  documents: Array<{
-    name: string;
-    url: string;
-    icon: React.ComponentType<any>;
-  }>;
-}
+
 
 export const data = {
-  usuario: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  NavegacionPrincipal: [
+  NavegacionSuperAdmin: [
     {
-      title: "Dashboard",
-      url: "#",
+      title: "Usuarios",
+      url: "/panel/super-admin/usuarios",
       icon: IconDashboard,
     },
     {
@@ -56,11 +30,11 @@ export const data = {
       icon: IconUsers,
     },
   ],
-  NavegacionSecundaria: [
+  NavegacionAdmin: [
     
     {
-      title: "Settings",
-      url: "#",
+      title: "Doctores y Pacientes",
+      url: "/panel/admin/usuarios",
       icon: IconSettings,
     },
     {
@@ -74,22 +48,47 @@ export const data = {
       icon: IconSearch,
     },
   ],
-  documents: [
+  NavegacionDoctor: [
     {
-      name: "Data Library",
+      title: "Data Library",
       url: "#",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
+      title: "Reports",
       url: "#",
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
+      title: "Word Assistant",
       url: "#",
       icon: IconFileDescription,
     },
+  ],
+  NavegacionRecepcion: [
+    {
+      title: "Data Library",
+      url: "#",
+      icon: IconDatabase,
+    },
+    {
+      title: "Reports",
+      url: "#",
+      icon: IconReport,
+    },
+    {
+      title: "Word Assistant",
+      url: "#",
+      icon: IconFileDescription,
+    },
+  ],
+  configuracion: [
+    {
+      title: "Ajustes de cuenta",
+      url: "/panel/mi-perfil",
+      icon: IconSettings,
+    },
+    
   ],
 }
 

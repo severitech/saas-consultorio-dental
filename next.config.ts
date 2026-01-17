@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
-import path from 'path';
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
   images: {
     remotePatterns: [
       {
@@ -10,15 +14,17 @@ const nextConfig: NextConfig = {
         hostname: 'assets.aceternity.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.fbcdn.net',
+        pathname: '/**',
+      },
     ],
-  },
-  turbopack: {}, // Configuración vacía para habilitar Turbopack sin conflictos
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      '@': path.resolve(__dirname),
-    };
-    return config;
   },
 };
 

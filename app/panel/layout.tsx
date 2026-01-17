@@ -11,13 +11,12 @@ export default function layout({
     <SidebarProvider
       style={
         {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
+          "--sidebar-width": "19rem",
         } as React.CSSProperties
       }
     >
       <AppSidebar variant="inset" />
-      <SidebarInset>
+      <SidebarInset className="overflow-auto">
         {children}
       </SidebarInset>
     </SidebarProvider>

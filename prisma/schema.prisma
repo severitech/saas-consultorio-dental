@@ -104,8 +104,8 @@ model Usuario {
   correo        String?   @unique
   nombre        String?
   emailVerified DateTime?
-  imagen         String?
-  contraseña    String?
+  imagen        String?
+  contraseña   String?
 
   rolId String
   // rol   RolSistema @relation(fields: [rolId], references: [id])
@@ -122,8 +122,6 @@ model Usuario {
   rolSistemaId    String?
   permisoUsuarios PermisoUsuario[]
   sesions         Sesion[]
-
-  @@map("usuarios")
 }
 
 // Modelos para permisos configurables
@@ -135,8 +133,6 @@ model Permiso {
   accion          String // Ej: "crear", "leer", "actualizar", "eliminar"
   roles           RolPermiso[]
   permisoUsuarios PermisoUsuario[]
-
-  @@map("permisos")
 }
 
 model RolSistema {
@@ -146,8 +142,6 @@ model RolSistema {
   nivel       Int          @default(0) // 0=Super Admin, 1=Admin, etc.
   permisos    RolPermiso[]
   usuarios    Usuario[]
-
-  @@map("roles_sistema")
 }
 
 model RolPermiso {
@@ -159,7 +153,6 @@ model RolPermiso {
   permiso   Permiso    @relation(fields: [permisoId], references: [id])
 
   @@unique([rolId, permisoId])
-  @@map("roles_permisos")
 }
 
 model PermisoUsuario {
@@ -171,7 +164,6 @@ model PermisoUsuario {
   permiso   Permiso @relation(fields: [permisoId], references: [id])
 
   @@unique([usuarioId, permisoId])
-  @@map("permisos_usuario")
 }
 
 // Modificar Usuario para usar RolSistema
@@ -181,8 +173,6 @@ model Sesion {
   usuarioId    String
   expires      DateTime
   usuario      Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
-  @@map("sesiones")
 }
 
 model TokenVerificacion {
@@ -191,7 +181,6 @@ model TokenVerificacion {
   expires    DateTime
 
   @@unique([identifier, token])
-  @@map("tokens_verificacion")
 }
 
 enum Rol {
@@ -249,8 +238,6 @@ model Consulta {
   updatedAt            DateTime              @updatedAt @map("actualizado_en")
   citas                Cita[]
   tratamientoConsultas TratamientoConsulta[]
-
-  @@map("consultas")
 }
 
 // --- citas.prisma ---
@@ -268,8 +255,6 @@ model Cita {
   consulta    Consulta?  @relation(fields: [consultaId], references: [id])
   createdAt   DateTime   @default(now()) @map("creado_en")
   updatedAt   DateTime   @updatedAt @map("actualizado_en")
-
-  @@map("citas")
 }
 
 enum EstadoCita {
@@ -290,8 +275,6 @@ model TratamientoConsulta {
 
   createdAt DateTime @default(now()) @map("creado_en")
   updatedAt DateTime @updatedAt @map("actualizado_en")
-
-  @@map("tratamientos_consultas")
 }
 
 model Diente {
@@ -301,8 +284,6 @@ model Diente {
   descripcion String?
   createdAt   DateTime @default(now()) @map("creado_en")
   updatedAt   DateTime @updatedAt @map("actualizado_en")
-
-  @@map("dientes")
 }
 
 // --- tratamientos.prisma ---
@@ -312,8 +293,6 @@ model Rama {
   categorias  Categoria[]
   createdAt   DateTime    @default(now()) @map("creado_en")
   updatedAt   DateTime    @updatedAt @map("actualizado_en")
-
-  @@map("Rama")
 }
 
 model Categoria {

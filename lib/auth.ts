@@ -80,6 +80,9 @@ export const opcionesAuth: NextAuthOptions = {
         token.rol = usuarioDB.rolSistema?.nombre;
         token.empresaId = usuarioDB.empresaId ?? undefined;
         token.empresa = usuarioDB.empresa?.nombre;
+        token.name = usuarioDB.nombre ?? undefined;
+        token.email = usuarioDB.correo ?? undefined;
+        token.image = usuarioDB.imagen ?? undefined;
       }
       return token;
     },
@@ -90,6 +93,9 @@ export const opcionesAuth: NextAuthOptions = {
         (session.user as any).rol = token.rol;
         (session.user as any).empresaId = token.empresaId;
         (session.user as any).empresa = token.empresa;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
       }
       return session;
     },

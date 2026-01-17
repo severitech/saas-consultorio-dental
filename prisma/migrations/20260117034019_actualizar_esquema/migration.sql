@@ -75,17 +75,75 @@ CREATE TABLE "Pago" (
     "actualizado_en" DATETIME NOT NULL,
     CONSTRAINT "Pago_suscripcionId_fkey" FOREIGN KEY ("suscripcionId") REFERENCES "Suscripcion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Pago_metodo_pago_id_fkey" FOREIGN KEY ("metodo_pago_id") REFERENCES "MetodoPago" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Pago_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Pago_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "usuarios" (
+CREATE TABLE "Usuario" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "correo" TEXT NOT NULL,
+    "correo" TEXT,
     "nombre" TEXT,
+    "emailVerified" DATETIME,
+    "imagen" TEXT,
+    "contraseña" TEXT,
     "rolId" TEXT NOT NULL,
     "empresaId" TEXT,
-    CONSTRAINT "usuarios_empresaId_fkey" FOREIGN KEY ("empresaId") REFERENCES "Empresa" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    "rolSistemaId" TEXT,
+    CONSTRAINT "Usuario_empresaId_fkey" FOREIGN KEY ("empresaId") REFERENCES "Empresa" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Usuario_rolSistemaId_fkey" FOREIGN KEY ("rolSistemaId") REFERENCES "RolSistema" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Permiso" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT,
+    "modulo" TEXT NOT NULL,
+    "accion" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "RolSistema" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT,
+    "nivel" INTEGER NOT NULL DEFAULT 0
+);
+
+-- CreateTable
+CREATE TABLE "RolPermiso" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "rolId" TEXT NOT NULL,
+    "permisoId" TEXT NOT NULL,
+    "concedido" BOOLEAN NOT NULL DEFAULT true,
+    CONSTRAINT "RolPermiso_rolId_fkey" FOREIGN KEY ("rolId") REFERENCES "RolSistema" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "RolPermiso_permisoId_fkey" FOREIGN KEY ("permisoId") REFERENCES "Permiso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "PermisoUsuario" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "usuarioId" TEXT NOT NULL,
+    "permisoId" TEXT NOT NULL,
+    "concedido" BOOLEAN NOT NULL DEFAULT true,
+    CONSTRAINT "PermisoUsuario_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "PermisoUsuario_permisoId_fkey" FOREIGN KEY ("permisoId") REFERENCES "Permiso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Sesion" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "sessionToken" TEXT NOT NULL,
+    "usuarioId" TEXT NOT NULL,
+    "expires" DATETIME NOT NULL,
+    CONSTRAINT "Sesion_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "TokenVerificacion" (
+    "identifier" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "expires" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -96,7 +154,7 @@ CREATE TABLE "pacientes" (
     "direccion" TEXT,
     "historialMedico" TEXT,
     "telefono" TEXT,
-    CONSTRAINT "pacientes_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "pacientes_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -113,25 +171,24 @@ CREATE TABLE "cuentas" (
     "alcance" TEXT,
     "idToken" TEXT,
     "estadoSesion" TEXT,
-    CONSTRAINT "cuentas_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "cuentas_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "Usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "consultas" (
+CREATE TABLE "Consulta" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "descripcion" TEXT,
     "fecha" DATETIME NOT NULL,
     "pacienteId" TEXT NOT NULL,
     "empresaId" TEXT NOT NULL,
     "creado_en" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "actualizado_en" DATETIME NOT NULL,
-    "usuarioId" TEXT,
-    CONSTRAINT "consultas_pacienteId_fkey" FOREIGN KEY ("pacienteId") REFERENCES "pacientes" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "consultas_empresaId_fkey" FOREIGN KEY ("empresaId") REFERENCES "Empresa" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "consultas_usuarioId_fkey" FOREIGN KEY ("usuarioId") REFERENCES "usuarios" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Consulta_pacienteId_fkey" FOREIGN KEY ("pacienteId") REFERENCES "pacientes" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Consulta_empresaId_fkey" FOREIGN KEY ("empresaId") REFERENCES "Empresa" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "citas" (
+CREATE TABLE "Cita" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "fecha" DATETIME NOT NULL,
     "descripcion" TEXT,
@@ -142,13 +199,36 @@ CREATE TABLE "citas" (
     "consultaId" TEXT,
     "creado_en" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "actualizado_en" DATETIME NOT NULL,
-    CONSTRAINT "citas_pacienteId_fkey" FOREIGN KEY ("pacienteId") REFERENCES "pacientes" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "citas_sucursalId_fkey" FOREIGN KEY ("sucursalId") REFERENCES "Sucursal" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "citas_consultaId_fkey" FOREIGN KEY ("consultaId") REFERENCES "consultas" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Cita_pacienteId_fkey" FOREIGN KEY ("pacienteId") REFERENCES "pacientes" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Cita_sucursalId_fkey" FOREIGN KEY ("sucursalId") REFERENCES "Sucursal" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Cita_consultaId_fkey" FOREIGN KEY ("consultaId") REFERENCES "Consulta" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "rama" (
+CREATE TABLE "TratamientoConsulta" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "tratamientoId" TEXT NOT NULL,
+    "consultaId" TEXT NOT NULL,
+    "precioUnitario" REAL NOT NULL,
+    "dienteId" TEXT,
+    "creado_en" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "actualizado_en" DATETIME NOT NULL,
+    CONSTRAINT "TratamientoConsulta_tratamientoId_fkey" FOREIGN KEY ("tratamientoId") REFERENCES "Tratamiento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "TratamientoConsulta_consultaId_fkey" FOREIGN KEY ("consultaId") REFERENCES "Consulta" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Diente" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "numero" INTEGER NOT NULL,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT,
+    "creado_en" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "actualizado_en" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Rama" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "descripcion" TEXT NOT NULL,
     "creado_en" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -162,7 +242,7 @@ CREATE TABLE "Categoria" (
     "ramaId" TEXT NOT NULL,
     "creado_en" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "actualizado_en" DATETIME NOT NULL,
-    CONSTRAINT "Categoria_ramaId_fkey" FOREIGN KEY ("ramaId") REFERENCES "rama" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Categoria_ramaId_fkey" FOREIGN KEY ("ramaId") REFERENCES "Rama" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -189,7 +269,28 @@ CREATE UNIQUE INDEX "Empresa_email_key" ON "Empresa"("email");
 CREATE UNIQUE INDEX "MetodoPago_nombre_key" ON "MetodoPago"("nombre");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "usuarios_correo_key" ON "usuarios"("correo");
+CREATE UNIQUE INDEX "Usuario_correo_key" ON "Usuario"("correo");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Permiso_nombre_key" ON "Permiso"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RolSistema_nombre_key" ON "RolSistema"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RolPermiso_rolId_permisoId_key" ON "RolPermiso"("rolId", "permisoId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PermisoUsuario_usuarioId_permisoId_key" ON "PermisoUsuario"("usuarioId", "permisoId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Sesion_sessionToken_key" ON "Sesion"("sessionToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TokenVerificacion_token_key" ON "TokenVerificacion"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TokenVerificacion_identifier_token_key" ON "TokenVerificacion"("identifier", "token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "pacientes_usuarioId_key" ON "pacientes"("usuarioId");
