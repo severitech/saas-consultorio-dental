@@ -3,11 +3,11 @@ import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 interface BreadcrumbItemProps {
   label: string;
@@ -27,7 +27,7 @@ export function HeaderPanel({ titulo, breadcrumbs = [] }: HeaderPanelProps) {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
-            <BreadcrumbLink href="/panel">Panel</BreadcrumbLink>
+            <Link href="/panel">Panel</Link>
           </BreadcrumbItem>
           
           {breadcrumbs.map((item, index) => (
@@ -35,7 +35,7 @@ export function HeaderPanel({ titulo, breadcrumbs = [] }: HeaderPanelProps) {
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem className="hidden md:block">
                 {item.href ? (
-                  <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                  <Link href={item.href}>{item.label}</Link>
                 ) : (
                   <BreadcrumbPage>{item.label}</BreadcrumbPage>
                 )}

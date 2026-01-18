@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
+import { opcionesAuth } from "@/lib/auth";
 
 // GET - Obtener un plan por ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(opcionesAuth);
@@ -14,8 +15,10 @@ export async function GET(
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
+    const { id } = await params;
+
     const plan = await prisma.plan.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: { suscripciones: true },
@@ -40,7 +43,7 @@ export async function GET(
 // PUT - Actualizar un plan
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(opcionesAuth);
@@ -49,6 +52,7 @@ export async function PUT(
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { nombre, precioMensual, descripcion } = body;
 
@@ -68,7 +72,7 @@ export async function PUT(
     }
 
     const plan = await prisma.plan.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nombre,
         precioMensual: parseFloat(precioMensual),
@@ -89,7 +93,7 @@ export async function PUT(
 // DELETE - Eliminar un plan
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(opcionesAuth);
@@ -98,10 +102,12 @@ export async function DELETE(
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
+    const { id } = await params;
+
     // Verificar si tiene suscripciones activas
     const suscripcionesActivas = await prisma.suscripcion.count({
       where: {
-        planId: params.id,
+        planId: id,
         estado: "ACTIVA",
       },
     });
@@ -114,7 +120,7 @@ export async function DELETE(
     }
 
     await prisma.plan.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: "Plan eliminado correctamente" });

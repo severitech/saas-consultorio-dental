@@ -7,8 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Plus, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { FormularioPlan } from "@/components/Panel/FormularioPlan";
-import { TablaPlanes } from "@/components/Panel/TablaPlanes";
+import { FormularioPlan } from "@/components/Panel/plan/FormularioPlan";
+import { TablaPlanes } from "@/components/Panel/plan/TablaPlanes";
 import { PlanInterface } from "@/interface/suscripciones";
 import {
   AlertDialog,
@@ -93,9 +93,6 @@ export default function PlanesYSuscripcionesPage() {
   };
 
   const handleFormularioSuccess = () => {
-    toast.success(
-      planEditar ? "Plan actualizado correctamente" : "Plan creado correctamente"
-    );
     cargarPlanes();
   };
 

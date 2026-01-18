@@ -1,10 +1,6 @@
 "use client"
 
-import {
-
-  IconInnerShadowTop,
-} from "@tabler/icons-react"
-
+import { IconInnerShadowTop } from "@tabler/icons-react"
 import { NavUser } from "@/components/Panel/Datos-Usuario"
 import {
   Sidebar,
@@ -15,11 +11,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { getNavegacionAgrupada, getCategorias } from "@/components/Panel/Lista"
+import { NavegacionPorCategoria } from "./NavegacionCategorias"
 
-import { data } from "@/components/Panel/Lista"
-import { NavSecondary } from "./Navegacion-Secundaria"
-import { NavegacionPrincipal } from "./Navegacion-Principal"
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navegacionAgrupada = getNavegacionAgrupada()
+  const categorias = getCategorias()
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -31,17 +29,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="/">
                 <IconInnerShadowTop className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Dental SaaS</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavegacionPrincipal titulo="Super Administrador" items={data.NavegacionSuperAdmin} />
-        <NavegacionPrincipal titulo="Administrador" items={data.NavegacionAdmin} />
-        <NavegacionPrincipal titulo="Doctor" items={data.NavegacionDoctor} />
-        <NavegacionPrincipal titulo="Recepcionista" items={data.NavegacionRecepcion} />
+        {/* Mostrar por categorías funcionales */}
+        {categorias.map((categoria, index) => {
+          const items = navegacionAgrupada[categoria]
+          // Solo mostrar categorías que tengan items
+          if (!items || items.length === 0) return null
+          
+          return (
+            <NavegacionPorCategoria
+              key={categoria}
+              titulo={categoria}
+              items={items}
+              isFirst={index === 0}
+            />
+          )
+        })}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

@@ -38,6 +38,7 @@ export const opcionesAuth: NextAuthOptions = {
             imagen: user.image,
             emailVerified: new Date(),
             rolId: "", // Vacío por defecto, se asignará después
+            estado: true, // Estado activo por defecto
           },
           include: {
             rolSistema: true,
@@ -45,13 +46,22 @@ export const opcionesAuth: NextAuthOptions = {
           },
         });
 
+        // Validar que el usuario esté activo
+        if (!usuarioDB.estado) {
+          throw new Error("Usuario inactivo. Contacta al administrador.");
+        }
+
         // Guardar la cuenta OAuth usando los campos en español
+        const cuentaExistente = await prisma.cuenta.findFirst({
+          where: {
+            proveedor: account.provider,
+            idCuentaProveedor: account.providerAccountId,
+          },
+        });
+
         await prisma.cuenta.upsert({
           where: {
-            proveedor_idCuentaProveedor: {
-              proveedor: account.provider,
-              idCuentaProveedor: account.providerAccountId,
-            },
+            id: cuentaExistente?.id || "",
           },
           update: {
             tokenAcceso: account.access_token,

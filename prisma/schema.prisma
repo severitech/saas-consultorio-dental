@@ -8,19 +8,19 @@ generator client {
 
 // --- suscripciones.prisma ---
 model Suscripcion {
-  id          String            @id @default(cuid())
+  id          String   @id @default(cuid())
   empresaId   String
-  empresa     Empresa           @relation(fields: [empresaId], references: [id])
+  empresa     Empresa  @relation(fields: [empresaId], references: [id])
   planId      String
-  plan        Plan              @relation(fields: [planId], references: [id])
+  plan        Plan     @relation(fields: [planId], references: [id])
   cuponId     String?
-  cupon       Cupon?            @relation(fields: [cuponId], references: [id])
+  cupon       Cupon?   @relation(fields: [cuponId], references: [id])
   fechaInicio DateTime
   fechaFin    DateTime
-  estado      EstadoSuscripcion @default(ACTIVA)
+  estado      Estado   @default(ACTIVA)
   pagos       Pago[]
-  createdAt   DateTime          @default(now()) @map("creado_en")
-  updatedAt   DateTime          @updatedAt @map("actualizado_en")
+  createdAt   DateTime @default(now()) @map("creado_en")
+  updatedAt   DateTime @updatedAt @map("actualizado_en")
 }
 
 model Plan {
@@ -31,6 +31,7 @@ model Plan {
   suscripciones Suscripcion[]
   createdAt     DateTime      @default(now()) @map("creado_en")
   updatedAt     DateTime      @updatedAt @map("actualizado_en")
+  estado        Boolean       @default(true)
 }
 
 model Cupon {
@@ -41,9 +42,10 @@ model Cupon {
   suscripciones   Suscripcion[]
   createdAt       DateTime      @default(now()) @map("creado_en")
   updatedAt       DateTime      @updatedAt @map("actualizado_en")
+  estado          Boolean       @default(true)
 }
 
-enum EstadoSuscripcion {
+enum Estado {
   ACTIVA
   CANCELADA
   EXPIRADA
@@ -76,6 +78,7 @@ model Sucursal {
   createdAt DateTime @default(now()) @map("creado_en")
   updatedAt DateTime @updatedAt @map("actualizado_en")
   citas     Cita[]
+  estado        Boolean       @default(true)
 }
 
 // --- pago.prisma ---
@@ -83,6 +86,7 @@ model MetodoPago {
   id     String @id @default(cuid())
   nombre String @unique
   pagos  Pago[]
+  estado        Boolean       @default(true)
 }
 
 model Pago {
@@ -97,6 +101,7 @@ model Pago {
   usuario       Usuario     @relation(fields: [usuarioId], references: [id])
   createdAt     DateTime    @default(now()) @map("creado_en")
   updatedAt     DateTime    @updatedAt @map("actualizado_en")
+  estado        Boolean       @default(true)
 }
 
 model Usuario {
@@ -122,6 +127,7 @@ model Usuario {
   rolSistemaId    String?
   permisoUsuarios PermisoUsuario[]
   sesions         Sesion[]
+  estado        Boolean       @default(true)
 }
 
 // Modelos para permisos configurables
@@ -202,8 +208,6 @@ model Paciente {
   usuario   Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   consultas Consulta[]
   citas     Cita[]
-
-  @@map("pacientes")
 }
 
 model Cuenta {
@@ -221,9 +225,6 @@ model Cuenta {
   estadoSesion      String?
 
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
-  @@unique([proveedor, idCuentaProveedor])
-  @@map("cuentas")
 }
 
 model Consulta {
@@ -238,6 +239,7 @@ model Consulta {
   updatedAt            DateTime              @updatedAt @map("actualizado_en")
   citas                Cita[]
   tratamientoConsultas TratamientoConsulta[]
+  estado        Boolean       @default(true)
 }
 
 // --- citas.prisma ---
@@ -293,6 +295,7 @@ model Rama {
   categorias  Categoria[]
   createdAt   DateTime    @default(now()) @map("creado_en")
   updatedAt   DateTime    @updatedAt @map("actualizado_en")
+  estado        Boolean       @default(true)
 }
 
 model Categoria {
@@ -303,6 +306,7 @@ model Categoria {
   rama         Rama          @relation(fields: [ramaId], references: [id])
   createdAt    DateTime      @default(now()) @map("creado_en")
   updatedAt    DateTime      @updatedAt @map("actualizado_en")
+  estado        Boolean       @default(true)
 }
 
 model Tratamiento {
@@ -317,4 +321,5 @@ model Tratamiento {
   createdAt            DateTime              @default(now()) @map("creado_en")
   updatedAt            DateTime              @updatedAt @map("actualizado_en")
   tratamientoConsultas TratamientoConsulta[]
+  estado        Boolean       @default(true)
 }
