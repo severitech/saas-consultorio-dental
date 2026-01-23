@@ -75,7 +75,7 @@ export const navegacion: NavItem[] = [
   // ==================== CATEGORÍA: CLÍNICA ====================
   {
     title: "Consultas",
-    url: "/panel/consultas-hoy",
+    url: "/panel/consultas",
     icon: IconClipboard,
     roles: ['DOCTOR'],
     categoria: "Clínica",

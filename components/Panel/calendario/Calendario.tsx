@@ -33,9 +33,21 @@ interface CalendarioComponenteProps {
   citas: Cita[];
   onActualizarCita?: (id: string, inicio: Date, fin: Date) => Promise<void>;
   onCrearCita?: (inicio: Date, fin: Date) => void;
+  consultaId?: string;
+  pacienteId?: string;
+  modoCompacto?: boolean;
+  alturaMinima?: string;
 }
 
-export default function CalendarioComponente({ citas, onActualizarCita, onCrearCita }: CalendarioComponenteProps) {
+export default function CalendarioComponente({ 
+  citas, 
+  onActualizarCita, 
+  onCrearCita,
+  consultaId,
+  pacienteId,
+  modoCompacto = false,
+  alturaMinima = '600px'
+}: CalendarioComponenteProps) {
   const [esMobile, setEsMobile] = useState(false);
   const [claveCalendario, setClaveCalendario] = useState(0);
   const [eventos, setEventos] = useState<EventoCitaTipo[]>([]);
@@ -83,9 +95,11 @@ export default function CalendarioComponente({ citas, onActualizarCita, onCrearC
     if (onCrearCita) {
       onCrearCita(start, end);
     } else {
-      toast.info('Nueva cita', {
-        description: `Seleccionado: ${format(start, 'HH:mm', { locale: es })} - ${format(end, 'HH:mm', { locale: es })}`,
-      });
+      const descripcion = consultaId && pacienteId 
+        ? `Cita programada para consulta #${consultaId.slice(0, 8)}`
+        : `Seleccionado: ${format(start, 'HH:mm', { locale: es })} - ${format(end, 'HH:mm', { locale: es })}`;
+      
+      toast.success('Nueva cita seleccionada');
     }
   }
 
@@ -169,7 +183,7 @@ export default function CalendarioComponente({ citas, onActualizarCita, onCrearC
           timeslots={configuracionHorario.ranuras}
           step={configuracionHorario.intervalo}
           messages={mensajesCalendario}
-          style={{ height: '100%', minHeight: '600px' }}
+          style={{ height: '100%', minHeight: modoCompacto ? alturaMinima : '600px' }}
           min={horaMinima}
           max={horaMaxima}
           scrollToTime={horaMinima}

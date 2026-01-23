@@ -1,12 +1,12 @@
+
 "use client"
 
 import React, { useState } from 'react';
-import { MOCK_HISTORY } from './constas';
+import { HISTORIAL_MOCK, EventoLineaTiempo } from './constas';
 import PatientHeader from './Pacientes';
 import TimelineCard from './LineaDeTiempo';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -25,7 +25,7 @@ import {
   X
 } from 'lucide-react';
 
-const ConsultasPage: React.FC = () => {
+const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -43,19 +43,19 @@ const ConsultasPage: React.FC = () => {
     }, 1500);
   };
 
-  const filteredHistory = MOCK_HISTORY.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.staff.name.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredHistory = HISTORIAL_MOCK.filter((event: EventoLineaTiempo) => {
+    const matchesSearch = event.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.descripcion.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.personal.nombre.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesStatus = statusFilter === 'all' || event.status.toLowerCase() === statusFilter;
+    const matchesStatus = statusFilter === 'all' || event.estado.toLowerCase() === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <main className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+      <main className=" mx-auto px-4  md:px-8 py-10">
         <PatientHeader onSummarize={handleSummarize} isSummarizing={isSummarizing} />
 
         {/* AI Summary Banner */}
@@ -138,12 +138,11 @@ const ConsultasPage: React.FC = () => {
 
         {/* Timeline */}
         <div className="relative">
-          {/* Línea vertical central */}
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-blue-300 via-gray-300 to-transparent -translate-x-1/2"></div>
           
           <div className="space-y-16">
             {filteredHistory.length > 0 ? (
-              filteredHistory.map((event, index) => (
+              filteredHistory.map((event: EventoLineaTiempo, index: number) => (
                 <TimelineCard key={event.id} event={event} isLeft={index % 2 === 0} />
               ))
             ) : (
@@ -215,4 +214,4 @@ const ConsultasPage: React.FC = () => {
   );
 };
 
-export default ConsultasPage;
+export default App;
